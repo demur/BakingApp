@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="match_parent" format="integer" type="dimen">-1</item>
+    <item name="wrap_content" format="integer" type="dimen">-2</item>
+    <dimen name="icon_size">42dp</dimen>
+    <dimen name="recipe_list_item_offset">4dp</dimen>
+    <dimen name="recycler_view_width">@dimen/match_parent</dimen>
+    <dimen name="recycler_view_height">@dimen/match_parent</dimen>
+    <dimen name="error_message_width">@dimen/wrap_content</dimen>
+    <dimen name="error_message_height">@dimen/wrap_content</dimen>
+</resources>

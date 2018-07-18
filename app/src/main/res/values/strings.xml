@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Baking App</string>
+    <string name="json_recipe_source">http://go.udacity.com/android-baking-app-json</string>
+    <string name="error_unexpected_response">Unexpected response from the server</string>
+    <string name="error_problem_connecting">Problem connecting to the server</string>
+    <string name="error_no_connection">No network detected, check Your connection</string>
+    <string name="content_description_servings_icon">Servings:</string>
 </resources>

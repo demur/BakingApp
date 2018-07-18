@@ -1,5 +1,4 @@
 <resources>
-
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
@@ -8,4 +7,34 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="RecyclerView">
+        <item name="android:layout_width">@dimen/recycler_view_width</item>
+        <item name="android:layout_height">@dimen/recycler_view_height</item>
+        <item name="android:scrollbars">vertical</item>
+        <item name="android:clipToPadding">true</item>
+        <item name="android:padding">@dimen/recipe_list_item_offset</item>
+    </style>
+
+    <style name="LoadingIndicator" parent="Widget.AppCompat.ProgressBar">
+        <item name="android:layout_width">@dimen/icon_size</item>
+        <item name="android:layout_height">@dimen/icon_size</item>
+        <item name="android:visibility">invisible</item>
+        <item name="layout_constraintBottom_toBottomOf">parent</item>
+        <item name="layout_constraintEnd_toEndOf">parent</item>
+        <item name="layout_constraintLeft_toLeftOf">parent</item>
+        <item name="layout_constraintRight_toRightOf">parent</item>
+        <item name="layout_constraintStart_toStartOf">parent</item>
+        <item name="layout_constraintTop_toTopOf">parent</item>
+    </style>
+
+    <style name="MessageIcon" parent="LoadingIndicator">
+        <item name="android:layout_marginBottom">@dimen/icon_size</item>
+        <item name="android:importantForAccessibility">no</item>
+    </style>
+
+    <style name="ErrorMessage">
+        <item name="android:layout_width">@dimen/error_message_width</item>
+        <item name="android:layout_height">@dimen/error_message_height</item>
+        <item name="android:visibility">invisible</item>
+    </style>
 </resources>

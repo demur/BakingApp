@@ -2,5 +2,11 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimaryLight">#C5CAE9</color>
     <color name="colorAccent">#FF4081</color>
+    <!--TODO fix colors-->
+    <color name="recipe_detail_rv_item_pressed_color">#FF4081</color>
+    <color name="recipe_detail_rv_item_selected_color">#FF4081</color>
+    <color name="recipe_detail_rv_item_focused_color">#FF4081</color>
+    <color name="recipe_detail_rv_item_color">#C5CAE9</color>
 </resources>

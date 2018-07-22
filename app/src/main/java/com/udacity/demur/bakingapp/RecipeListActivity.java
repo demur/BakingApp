@@ -1,5 +1,6 @@
 package com.udacity.demur.bakingapp;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -120,10 +121,11 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeAdapt
 
     @Override
     public void onClick(Recipe recipe) {
-        //Intent detailIntent = new Intent(this, DetailActivity.class);
-        //detailIntent.putExtra("recipe", recipe);
+        Intent recipeDetailIntent = new Intent(this, RecipeDetailActivity.class);
+        recipeDetailIntent.putExtra("recipe", new Gson().toJson(recipe));
+        recipeDetailIntent.putExtra("recipe_name", recipe.getName());
 
-        //startActivity(detailIntent);
+        startActivity(recipeDetailIntent);
     }
 
     @Override

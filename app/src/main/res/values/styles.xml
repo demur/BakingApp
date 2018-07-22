@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
@@ -36,5 +36,40 @@
         <item name="android:layout_width">@dimen/error_message_width</item>
         <item name="android:layout_height">@dimen/error_message_height</item>
         <item name="android:visibility">invisible</item>
+    </style>
+
+    <style name="TabLayout" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="tabTextColor">@android:color/darker_gray</item>
+        <item name="tabSelectedTextColor">@android:color/white</item>
+        <item name="android:layout_width">@dimen/tabs_width</item>
+        <item name="android:layout_height">@dimen/tabs_height</item>
+        <item name="android:layout_marginEnd" tools:ignore="NewApi">@dimen/sv_margin_start</item>
+        <item name="android:layout_marginLeft">@dimen/sv_margin_start</item>
+        <item name="android:layout_marginRight">@dimen/sv_margin_start</item>
+        <item name="android:layout_marginStart" tools:ignore="NewApi">@dimen/sv_margin_start</item>
+        <item name="android:elevation" tools:ignore="NewApi">@dimen/tabs_elevation</item>
+        <item name="layout_constrainedWidth">true</item>
+        <item name="layout_constraintEnd_toEndOf">parent</item>
+        <item name="layout_constraintLeft_toLeftOf">parent</item>
+        <item name="layout_constraintRight_toRightOf">parent</item>
+        <item name="layout_constraintStart_toStartOf">parent</item>
+        <item name="layout_constraintTop_toTopOf">parent</item>
+        <item name="tabGravity">fill</item>
+        <item name="tabMaxWidth">@dimen/tabs_max_width</item>
+        <item name="tabMode">scrollable</item>
+    </style>
+
+    <style name="ViewPagerContainer">
+        <item name="android:layout_width">@dimen/vp_container_width</item>
+        <item name="android:layout_height">@dimen/vp_container_height</item>
+        <item name="android:elevation" tools:ignore="NewApi">@dimen/vp_container_elevation</item>
+        <item name="layout_constrainedWidth">true</item>
+        <item name="layout_constraintBottom_toBottomOf">parent</item>
+        <item name="layout_constraintEnd_toEndOf">@id/tabs</item>
+        <item name="layout_constraintLeft_toLeftOf">@id/tabs</item>
+        <item name="layout_constraintRight_toRightOf">@id/tabs</item>
+        <item name="layout_constraintStart_toStartOf">@id/tabs</item>
+        <item name="layout_constraintTop_toBottomOf">@id/tabs</item>
     </style>
 </resources>

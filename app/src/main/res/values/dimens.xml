@@ -8,4 +8,12 @@
     <dimen name="recycler_view_height">@dimen/match_parent</dimen>
     <dimen name="error_message_width">@dimen/wrap_content</dimen>
     <dimen name="error_message_height">@dimen/wrap_content</dimen>
+    <dimen name="tabs_height">@dimen/wrap_content</dimen>
+    <dimen name="tabs_width">0dp</dimen>
+    <dimen name="sv_margin_start">0dp</dimen>
+    <dimen name="tabs_elevation">2dp</dimen>
+    <dimen name="tabs_max_width">0dp</dimen>
+    <dimen name="vp_container_width">0dp</dimen>
+    <dimen name="vp_container_height">0dp</dimen>
+    <dimen name="vp_container_elevation">0dp</dimen>
 </resources>

@@ -23,6 +23,9 @@ public class RecipeStep implements Serializable {
     private int id;
 
     public String getThumbnailURL() {
+        if (null != thumbnailURL && thumbnailURL.endsWith(".mp4")) {
+            return null;
+        }
         return thumbnailURL;
     }
 
@@ -31,6 +34,8 @@ public class RecipeStep implements Serializable {
     }
 
     public String getVideoURL() {
+        if ((null == videoURL || videoURL.isEmpty()) && null != thumbnailURL && thumbnailURL.endsWith(".mp4"))
+            return thumbnailURL;
         return videoURL;
     }
 

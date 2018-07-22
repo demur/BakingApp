@@ -5,4 +5,10 @@
     <string name="error_problem_connecting">Problem connecting to the server</string>
     <string name="error_no_connection">No network detected, check Your connection</string>
     <string name="content_description_servings_icon">Servings:</string>
+    <string name="error_no_data_for_detail_activity">Damn!\\nApp was unable to retrieve recipe data to display</string>
+    <string name="ingredient_item">%1$s - %2$s\u00A0%3$s</string>
+    <string name="tab_name_intro">Intro</string>
+    <string name="tab_name_step">step %1$d</string>
+    <string name="step_name_rv_item">%1$d. %2$s</string>
+    <string name="content_description_video_presence_icon">This step has video</string>
 </resources>

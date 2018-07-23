@@ -62,7 +62,7 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeAdapt
 
         mLayoutManager = new GridLayoutManager(this, Utilities.getGridLayoutColumnCount(this));
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.addItemDecoration(new RecipeAdapter.ItemOffsetDecoration(this, R.dimen.recipe_list_item_offset));
+        //mRecyclerView.addItemDecoration(new RecipeAdapter.ItemOffsetDecoration(this, R.dimen.recipe_list_item_offset));
         mRecipeAdapter = new RecipeAdapter(this, this);
         mRecyclerView.setAdapter(mRecipeAdapter);
 

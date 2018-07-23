@@ -6,7 +6,9 @@
     android:layout_height="wrap_content"
     android:background="@drawable/recipe_detail_selector"
     android:elevation="2dp"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:layout_marginTop="2dp"
+    android:layout_marginBottom="2dp">
 
     <TextView
         android:id="@+id/tv_step_name"

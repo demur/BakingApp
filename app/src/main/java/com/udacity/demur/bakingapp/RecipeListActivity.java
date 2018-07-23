@@ -1,5 +1,7 @@
 package com.udacity.demur.bakingapp;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -27,7 +29,9 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 
-public class RecipeListActivity extends AppCompatActivity implements RecipeAdapter.RecipeAdapterOnClickHandler {
+public class RecipeListActivity extends AppCompatActivity implements
+        RecipeAdapter.RecipeAdapterOnClickHandler,
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = RecipeListActivity.class.getSimpleName();
 
@@ -59,6 +63,7 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeAdapt
         mStatusMessage = findViewById(R.id.tv_message);
         mRecyclerView.setHasFixedSize(true);
         mSharedPrefs = getApplicationContext().getSharedPreferences("Settings", MODE_PRIVATE);
+        mSharedPrefs.registerOnSharedPreferenceChangeListener(this);
 
         mLayoutManager = new GridLayoutManager(this, Utilities.getGridLayoutColumnCount(this));
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -124,6 +129,11 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeAdapt
         Intent recipeDetailIntent = new Intent(this, RecipeDetailActivity.class);
         recipeDetailIntent.putExtra("recipe", new Gson().toJson(recipe));
         recipeDetailIntent.putExtra("recipe_name", recipe.getName());
+        mSharedPrefs
+                .edit()
+                .putString("last_seen_recipe_name", recipe.getName())
+                .putString("last_seen_recipe_ingredients_json", new Gson().toJson(recipe.getIngredients()))
+                .apply();
 
         startActivity(recipeDetailIntent);
     }
@@ -158,5 +168,22 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeAdapt
             // Preventing recurring use of this state on the rest of onResume single calls (without onRestoreInstanceState)
             mLayoutManagerState = null;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mSharedPrefs.unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+        // updating all the AppWidgets to display ingredients for just visited recipe
+        Intent intent = new Intent(this, RecipeIngredientsAppWidget.class);
+        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        int[] ids = AppWidgetManager.getInstance(getApplication())
+                .getAppWidgetIds(new ComponentName(getApplication(), RecipeIngredientsAppWidget.class));
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+        sendBroadcast(intent);
     }
 }

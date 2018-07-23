@@ -17,4 +17,5 @@
     <dimen name="vp_container_height">0dp</dimen>
     <dimen name="vp_container_elevation">0dp</dimen>
     <dimen name="player_view_margin">8dp</dimen>
+    <dimen name="widget_margin">8dp</dimen>
 </resources>

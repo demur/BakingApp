@@ -7,6 +7,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
+import android.support.test.espresso.IdlingResource;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +20,7 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.udacity.demur.bakingapp.IdlingResource.BakingIdlingResource;
 import com.udacity.demur.bakingapp.adapter.RecipeAdapter;
 import com.udacity.demur.bakingapp.model.Recipe;
 import com.udacity.demur.bakingapp.service.BakingJsonClient;
@@ -52,10 +56,20 @@ public class RecipeListActivity extends AppCompatActivity implements
     private Type listRecipeType = new TypeToken<List<Recipe>>() {
     }.getType();
 
+    @Nullable
+    private BakingIdlingResource mIdlingResource;
+
+    @VisibleForTesting
+    @NonNull
+    public IdlingResource getIdlingResource() {
+        return null == mIdlingResource ? new BakingIdlingResource() : mIdlingResource;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_list);
+        getIdlingResource();
 
         mRecyclerView = findViewById(R.id.rv_recipe_list);
         mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
@@ -80,11 +94,22 @@ public class RecipeListActivity extends AppCompatActivity implements
                 mRecipeList = new Gson().fromJson(savedInstanceState.getString(RECIPE_LIST_JSON_KEY), listRecipeType);
             mRecipeAdapter.swapRecipeList(mRecipeList);
         } else {
+            //requestBakingJson(mClient.listRecipes(getResources().getString(R.string.json_recipe_source)));
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (null == mRecipeList) {
             requestBakingJson(mClient.listRecipes(getResources().getString(R.string.json_recipe_source)));
         }
     }
 
     public void requestBakingJson(Call<List<Recipe>> call) {
+        if (mIdlingResource != null) {
+            mIdlingResource.setIdleState(false);
+        }
         mLoadingIndicator.setVisibility(View.VISIBLE);
         mStatusIcon.setVisibility(View.INVISIBLE);
         mStatusMessage.setVisibility(View.INVISIBLE);
@@ -105,6 +130,9 @@ public class RecipeListActivity extends AppCompatActivity implements
                     mStatusMessage.setVisibility(View.VISIBLE);
                     mStatusIcon.setVisibility(View.VISIBLE);
                 }
+                if (mIdlingResource != null) {
+                    mIdlingResource.setIdleState(true);
+                }
             }
 
             @Override
@@ -120,6 +148,9 @@ public class RecipeListActivity extends AppCompatActivity implements
                 mRecyclerView.setVisibility(View.INVISIBLE);
                 mStatusMessage.setVisibility(View.VISIBLE);
                 mStatusIcon.setVisibility(View.VISIBLE);
+                if (mIdlingResource != null) {
+                    mIdlingResource.setIdleState(true);
+                }
             }
         });
     }

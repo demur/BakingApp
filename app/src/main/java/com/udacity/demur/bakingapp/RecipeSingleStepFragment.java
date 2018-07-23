@@ -39,6 +39,11 @@ import static android.support.constraint.ConstraintSet.MATCH_CONSTRAINT;
 import static android.support.constraint.ConstraintSet.START;
 import static android.support.constraint.ConstraintSet.TOP;
 
+/*
+ * The idea how to use Dialog to open ExoPlayer in fullscreen mode was published by GeoffLedak at
+ * https://github.com/GeoffLedak/ExoplayerFullscreen/blob/master/app/src/main/java/com/geoffledak/exoplayerfullscreen/MainActivity.java
+ * */
+
 public class RecipeSingleStepFragment extends Fragment {
     private static final String TAG = RecipeSingleStepFragment.class.getSimpleName();
 

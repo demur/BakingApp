@@ -72,6 +72,10 @@ public class RecipeDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         final Context context = holder.itemView.getContext();
         switch (holder.getItemViewType()) {
             case INGREDIENTS_VIEW_TYPE:
+                /*
+                * The idea how to display bulleted list was publish by Diego Frehner at
+                * https://stackoverflow.com/a/6954941
+                * */
                 IngredientsViewHolder ingredientsHolder = (IngredientsViewHolder) holder;
                 CharSequence ingredientList = "Ingredients:";
                 SpannableString spannableString = new SpannableString(ingredientList);

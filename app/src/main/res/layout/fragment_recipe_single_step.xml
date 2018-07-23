@@ -6,6 +6,7 @@
     android:layout_height="match_parent">
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/cl_step_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -13,9 +14,11 @@
             android:id="@+id/recipe_step_video"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginEnd="@dimen/player_view_margin"
+            android:layout_marginLeft="@dimen/player_view_margin"
+            android:layout_marginRight="@dimen/player_view_margin"
+            android:layout_marginStart="@dimen/player_view_margin"
+            android:layout_marginTop="@dimen/player_view_margin"
             app:layout_constraintDimensionRatio="W,9:16"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"

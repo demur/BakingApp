@@ -48,8 +48,6 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeAdap
     @Override
     public void onBindViewHolder(@NonNull final RecipeAdapterViewHolder holder, int position) {
         final Recipe theRecipe = recipeList.get(position);
-        //holder.tvTitle.setText(theRecipe.getTitle());
-        //holder.ivPoster.setContentDescription("\"" + theRecipe.getTitle() + "\" movie poster");
         holder.tvName.setText(theRecipe.getName());
         holder.tvServings.setText(String.valueOf(theRecipe.getServings()));
         if (null != mUnsplash) {
@@ -92,8 +90,6 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeAdap
     }
 
     class RecipeAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        //final ImageView ivPoster;
-        //final TextView tvTitle;
         final TextView tvName;
         final TextView tvServings;
         final ImageView ivHolder;
@@ -101,8 +97,6 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeAdap
         RecipeAdapterViewHolder(View itemView) {
             super(itemView);
 
-            //ivPoster = itemView.findViewById(R.id.iv_poster);
-            //tvTitle = itemView.findViewById(R.id.tv_title);
             tvName = itemView.findViewById(R.id.tv_name);
             tvServings = itemView.findViewById(R.id.tv_servings);
             ivHolder = itemView.findViewById(R.id.iv_holder);

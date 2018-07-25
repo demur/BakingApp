@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.udacity.demur.bakingapp.R;
 import com.udacity.demur.bakingapp.RecipeDetailFragment;
 import com.udacity.demur.bakingapp.model.Recipe;
@@ -73,9 +74,9 @@ public class RecipeDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         switch (holder.getItemViewType()) {
             case INGREDIENTS_VIEW_TYPE:
                 /*
-                * The idea how to display bulleted list was publish by Diego Frehner at
-                * https://stackoverflow.com/a/6954941
-                * */
+                 * The idea how to display bulleted list was publish by Diego Frehner at
+                 * https://stackoverflow.com/a/6954941
+                 * */
                 IngredientsViewHolder ingredientsHolder = (IngredientsViewHolder) holder;
                 CharSequence ingredientList = "Ingredients:";
                 SpannableString spannableString = new SpannableString(ingredientList);
@@ -105,6 +106,12 @@ public class RecipeDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     commonHolder.ivPlayIcon.setVisibility(View.VISIBLE);
                 else
                     commonHolder.ivPlayIcon.setVisibility(View.INVISIBLE);
+                if (null != step.getThumbnailURL() && !step.getThumbnailURL().isEmpty())
+                    Picasso.get().load(step.getThumbnailURL())
+                            .noPlaceholder().error(R.drawable.ic_broken_image)
+                            .fit().centerInside().into(commonHolder.ivThumb);
+                else if (position % 2 == 0)
+                    commonHolder.ivThumb.setScaleX(-1);
         }
     }
 
@@ -128,12 +135,14 @@ public class RecipeDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     class RecipeDetailAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         final ImageView ivPlayIcon;
         final TextView tvStepName;
+        final ImageView ivThumb;
 
         RecipeDetailAdapterViewHolder(View itemView) {
             super(itemView);
 
             ivPlayIcon = itemView.findViewById(R.id.iv_play_icon);
             tvStepName = itemView.findViewById(R.id.tv_step_name);
+            ivThumb = itemView.findViewById(R.id.iv_recipe_thumb);
 
             itemView.setOnClickListener(this);
         }

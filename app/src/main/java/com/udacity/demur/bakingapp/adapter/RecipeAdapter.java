@@ -57,6 +57,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeAdap
                     Log.d("Photos", "Total Results Found " + results.getTotal());
                     List<Photo> photos = results.getResults();
                     Picasso.get().load(photos.get(0).getUrls().getFull())
+                            .noPlaceholder().error(R.drawable.ic_broken_image)
                             .fit().centerCrop().into(holder.ivHolder);
                 }
 

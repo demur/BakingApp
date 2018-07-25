@@ -107,14 +107,16 @@ public class RecipeSingleStepFragment extends Fragment {
         mPlayerViewParentView = view.findViewById(R.id.cl_step_container);
         if (null != theRecipeStep.getVideoURL() && !theRecipeStep.getVideoURL().isEmpty()) {
             mPlayerView.setVisibility(View.VISIBLE);
-            initPlayer(theRecipeStep.getVideoURL());
-        } else
+            //initPlayer(theRecipeStep.getVideoURL());
+        } else {
             mPlayerView.setVisibility(View.GONE);
+            mPlayerView = null;
+        }
         return view;
     }
 
     private void initPlayer(String videoURL) {
-        if (null == mPlayer) {
+        if (null == mPlayer && null != mPlayerView) {
             //Handler mainHandler = new Handler();
             BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
             TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
@@ -160,14 +162,15 @@ public class RecipeSingleStepFragment extends Fragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (!isVisibleToUser) {
+            mFragmentVisibilityState = false;
             if (mPlayer != null && mPlayer.getPlayWhenReady())
                 mPlayer.setPlayWhenReady(false);
-            mFragmentVisibilityState = false;
+            releasePlayer();
         } else {
             mFragmentVisibilityState = true;
             if (mFailedResumeAttempt) {
-                resumePlayer();
                 mFailedResumeAttempt = false;
+                resumePlayer();
             }
         }
     }
@@ -234,18 +237,18 @@ public class RecipeSingleStepFragment extends Fragment {
     }
 
     private void resumePlayer() {
-        if (mFragmentVisibilityState && null != theRecipeStep) {
-            if (null != mPlayer) {
-                boolean haveResumePosition = mResumeWindow != C.INDEX_UNSET;
-                if (haveResumePosition && (mResumeWindow != 0 || mResumePosition != 0))
-                    mPlayer.seekTo(mResumeWindow, mResumePosition);
+        if (mFragmentVisibilityState && null != theRecipeStep && null != mPlayerView) {
+            if (null == mPlayer)
+                initPlayer(theRecipeStep.getVideoURL());
+            boolean haveResumePosition = mResumeWindow != C.INDEX_UNSET;
+            if (haveResumePosition && (mResumeWindow != 0 || mResumePosition != 0))
+                mPlayer.seekTo(mResumeWindow, mResumePosition);
 
-                mPlayer.setPlayWhenReady(mPlayWhenReadyState);
+            mPlayer.setPlayWhenReady(mPlayWhenReadyState);
 
-                if (mExoPlayerFullscreen || (getActivity() instanceof RecipeStepsActivity && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)) {
-                    openFullscreenDialog();
-                }
-            }
+            if (mExoPlayerFullscreen || (getActivity() instanceof RecipeStepsActivity
+                    && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE))
+                openFullscreenDialog();
         } else
             mFailedResumeAttempt = true;
     }
@@ -260,12 +263,16 @@ public class RecipeSingleStepFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        releasePlayer();
+    }
+
+    private void releasePlayer() {
         if (mPlayerView != null && mPlayer != null) {
             mResumeWindow = mPlayer.getCurrentWindowIndex();
             mResumePosition = Math.max(0, mPlayer.getContentPosition());
             mPlayWhenReadyState = mPlayer.getPlayWhenReady();
 
-            //mPlayer.release();
+            mPlayer.release();
         }
 
         if (mFullScreenDialog != null)

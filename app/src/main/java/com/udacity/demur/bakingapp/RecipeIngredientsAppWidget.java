@@ -41,14 +41,8 @@ public class RecipeIngredientsAppWidget extends AppWidgetProvider {
 
     private static RemoteViews getListViewRemoteView(Context context) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.recipe_ingredients_app_widget);
-        // Set the GridWidgetService intent to act as the adapter for the GridView
         Intent intent = new Intent(context, ListWidgetService.class);
         views.setRemoteAdapter(R.id.appwidget_list_view, intent);
-        // Set the PlantDetailActivity intent to launch when clicked
-        //Intent appIntent = new Intent(context, PlantDetailActivity.class);
-        //PendingIntent appPendingIntent = PendingIntent.getActivity(context, 0, appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        //views.setPendingIntentTemplate(R.id.appwidget_list_view, appPendingIntent);
-        // Handle empty gardens
         views.setEmptyView(R.id.appwidget_list_view, R.id.empty_list);
         SharedPreferences sharedPrefs = context.getSharedPreferences("Settings", MODE_PRIVATE);
         String recipeName = sharedPrefs.getString("last_seen_recipe_name", "");

@@ -4,9 +4,9 @@ package com.udacity.demur.bakingapp;
 import android.support.test.espresso.IdlingRegistry;
 import android.support.test.espresso.IdlingResource;
 import android.support.test.espresso.contrib.RecyclerViewActions;
+import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.test.suitebuilder.annotation.LargeTest;
 
 import com.jakewharton.espresso.OkHttp3IdlingResource;
 import com.udacity.demur.bakingapp.service.RetrofitClient;

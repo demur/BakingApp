@@ -38,6 +38,7 @@ import static android.support.constraint.ConstraintSet.END;
 import static android.support.constraint.ConstraintSet.MATCH_CONSTRAINT;
 import static android.support.constraint.ConstraintSet.START;
 import static android.support.constraint.ConstraintSet.TOP;
+import static com.udacity.demur.bakingapp.RecipeListActivity.EXTRA_JSON_STEP_KEY;
 
 /*
  * The idea how to use Dialog to open ExoPlayer in fullscreen mode was published by GeoffLedak at
@@ -46,8 +47,6 @@ import static android.support.constraint.ConstraintSet.TOP;
 
 public class RecipeSingleStepFragment extends Fragment {
     private static final String TAG = RecipeSingleStepFragment.class.getSimpleName();
-
-    private static final String JSON_RECIPE_STEP_PARAM_KEY = "json_recipe_step_key";
 
     private static final String STATE_RESUME_WINDOW = "resumeWindow";
     private static final String STATE_RESUME_POSITION = "resumePosition";
@@ -77,7 +76,7 @@ public class RecipeSingleStepFragment extends Fragment {
     public static RecipeSingleStepFragment newInstance(String jsonRecipeStep) {
         RecipeSingleStepFragment fragment = new RecipeSingleStepFragment();
         Bundle args = new Bundle();
-        args.putString(JSON_RECIPE_STEP_PARAM_KEY, jsonRecipeStep);
+        args.putString(EXTRA_JSON_STEP_KEY, jsonRecipeStep);
         fragment.setArguments(args);
         return fragment;
     }
@@ -85,11 +84,11 @@ public class RecipeSingleStepFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            jsonRecipeStep = getArguments().getString(JSON_RECIPE_STEP_PARAM_KEY);
+        if (null != getArguments()) {
+            jsonRecipeStep = getArguments().getString(EXTRA_JSON_STEP_KEY);
             theRecipeStep = new Gson().fromJson(jsonRecipeStep, RecipeStep.class);
         }
-        if (savedInstanceState != null) {
+        if (null != savedInstanceState) {
             mResumeWindow = savedInstanceState.getInt(STATE_RESUME_WINDOW);
             mResumePosition = savedInstanceState.getLong(STATE_RESUME_POSITION);
             mExoPlayerFullscreen = savedInstanceState.getBoolean(STATE_PLAYER_FULLSCREEN);
@@ -152,7 +151,7 @@ public class RecipeSingleStepFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
 
-        if (mPlayer != null) {
+        if (null != mPlayer) {
             mPlayer.release();
             mPlayer = null;
         }
@@ -163,7 +162,7 @@ public class RecipeSingleStepFragment extends Fragment {
         super.setUserVisibleHint(isVisibleToUser);
         if (!isVisibleToUser) {
             mFragmentVisibilityState = false;
-            if (mPlayer != null && mPlayer.getPlayWhenReady())
+            if (null != mPlayer && mPlayer.getPlayWhenReady())
                 mPlayer.setPlayWhenReady(false);
             releasePlayer();
         } else {
@@ -196,7 +195,10 @@ public class RecipeSingleStepFragment extends Fragment {
 
     private void openFullscreenDialog() {
         ((ViewGroup) mPlayerView.getParent()).removeView(mPlayerView);
-        mFullScreenDialog.addContentView(mPlayerView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        mFullScreenDialog.addContentView(mPlayerView,
+                new ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
         mFullScreenIcon.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_fullscreen_skrink));
         mExoPlayerFullscreen = true;
         mFullScreenDialog.show();
@@ -267,7 +269,7 @@ public class RecipeSingleStepFragment extends Fragment {
     }
 
     private void releasePlayer() {
-        if (mPlayerView != null && mPlayer != null) {
+        if (null != mPlayerView && null != mPlayer) {
             mResumeWindow = mPlayer.getCurrentWindowIndex();
             mResumePosition = Math.max(0, mPlayer.getContentPosition());
             mPlayWhenReadyState = mPlayer.getPlayWhenReady();
@@ -275,7 +277,7 @@ public class RecipeSingleStepFragment extends Fragment {
             mPlayer.release();
         }
 
-        if (mFullScreenDialog != null)
+        if (null != mFullScreenDialog)
             mFullScreenDialog.dismiss();
     }
 }

@@ -1,5 +1,7 @@
 package com.udacity.demur.bakingapp.model;
 
+import android.text.TextUtils;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -34,8 +36,9 @@ public class RecipeStep implements Serializable {
     }
 
     public String getVideoURL() {
-        if ((null == videoURL || videoURL.isEmpty()) && null != thumbnailURL && thumbnailURL.endsWith(".mp4"))
+        if (TextUtils.isEmpty(videoURL) && null != thumbnailURL && thumbnailURL.endsWith(".mp4")) {
             return thumbnailURL;
+        }
         return videoURL;
     }
 

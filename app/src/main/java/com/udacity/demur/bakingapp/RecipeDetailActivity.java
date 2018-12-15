@@ -1,7 +1,6 @@
 package com.udacity.demur.bakingapp;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
@@ -13,13 +12,11 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.udacity.demur.bakingapp.model.Recipe;
 
-import java.util.Objects;
-
 public class RecipeDetailActivity extends AppCompatActivity implements
         RecipeDetailFragment.OnRecyclerViewDetailFragmentClickListener,
         RecipeStepsFragment.OnStepTabFragmentChangeListener {
 
-    private static final String TAG = RecipeListActivity.class.getSimpleName();
+    private static final String TAG = RecipeDetailActivity.class.getSimpleName();
 
     private boolean mTwoPane;
     private String jsonRecipe;
@@ -28,15 +25,15 @@ public class RecipeDetailActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (null != getIntent().getExtras() && getIntent().hasExtra("recipe")) {
+        if (null != getIntent().getExtras() && getIntent().hasExtra(RecipeListActivity.EXTRA_JSON_RECIPE_KEY)) {
             setContentView(R.layout.activity_recipe_detail);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+            if (null != getSupportActionBar()) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             }
 
-            jsonRecipe = getIntent().getStringExtra("recipe");
-            if (getIntent().hasExtra("recipe_name")) {
-                recipeName = getIntent().getStringExtra("recipe_name");
+            jsonRecipe = getIntent().getStringExtra(RecipeListActivity.EXTRA_JSON_RECIPE_KEY);
+            if (getIntent().hasExtra(RecipeListActivity.EXTRA_RECIPE_NAME_KEY)) {
+                recipeName = getIntent().getStringExtra(RecipeListActivity.EXTRA_RECIPE_NAME_KEY);
             }
             if (null == recipeName) {
                 recipeName = (new Gson().fromJson(jsonRecipe, Recipe.class)).getName();
@@ -64,10 +61,12 @@ public class RecipeDetailActivity extends AppCompatActivity implements
             }
 
         } else {
-            Toast toast = Toast.makeText(getApplicationContext(), R.string.error_no_data_for_detail_activity, Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(getApplicationContext(),
+                    R.string.error_no_data_for_detail_activity, Toast.LENGTH_LONG);
             TextView v = toast.getView().findViewById(android.R.id.message);
-            if (null != v)
+            if (null != v) {
                 v.setGravity(Gravity.CENTER);
+            }
             toast.show();
             NavUtils.navigateUpFromSameTask(this);
         }
@@ -75,7 +74,8 @@ public class RecipeDetailActivity extends AppCompatActivity implements
 
     @Override
     public void onStepTabFragmentChange(int position) {
-        RecipeDetailFragment recipeDetailFragment = (RecipeDetailFragment) getSupportFragmentManager().findFragmentById(R.id.recipe_detail_fragment_holder);
+        RecipeDetailFragment recipeDetailFragment = (RecipeDetailFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.recipe_detail_fragment_holder);
         if (null != recipeDetailFragment) {
             recipeDetailFragment.setSelectedStep(position);
         }
@@ -85,13 +85,14 @@ public class RecipeDetailActivity extends AppCompatActivity implements
     public void onRecyclerViewFragmentInteraction(int position) {
         if (!mTwoPane) {
             Intent recipeStepsIntent = new Intent(this, RecipeStepsActivity.class);
-            recipeStepsIntent.putExtra("recipe", jsonRecipe);
-            recipeStepsIntent.putExtra("recipe_name", recipeName);
-            recipeStepsIntent.putExtra("step_number", position);
+            recipeStepsIntent.putExtra(RecipeListActivity.EXTRA_JSON_RECIPE_KEY, jsonRecipe);
+            recipeStepsIntent.putExtra(RecipeListActivity.EXTRA_RECIPE_NAME_KEY, recipeName);
+            recipeStepsIntent.putExtra(RecipeListActivity.EXTRA_STEP_NUMBER_KEY, position);
 
             startActivity(recipeStepsIntent);
         } else {
-            RecipeStepsFragment recipeStepsFragment = (RecipeStepsFragment) getSupportFragmentManager().findFragmentById(R.id.recipe_steps_fragment_holder);
+            RecipeStepsFragment recipeStepsFragment = (RecipeStepsFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.recipe_steps_fragment_holder);
             if (null != recipeStepsFragment) {
                 recipeStepsFragment.setCurrentTab(position);
             }

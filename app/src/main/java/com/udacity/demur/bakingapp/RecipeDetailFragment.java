@@ -14,9 +14,9 @@ import com.google.gson.Gson;
 import com.udacity.demur.bakingapp.adapter.RecipeDetailAdapter;
 import com.udacity.demur.bakingapp.model.Recipe;
 
-public class RecipeDetailFragment extends Fragment {
+import static com.udacity.demur.bakingapp.RecipeListActivity.EXTRA_JSON_RECIPE_KEY;
 
-    private static final String JSON_RECIPE_PARAM_KEY = "json_recipe_key";
+public class RecipeDetailFragment extends Fragment {
 
     private String jsonRecipe;
     private Recipe theRecipe;
@@ -31,7 +31,7 @@ public class RecipeDetailFragment extends Fragment {
     public static RecipeDetailFragment newInstance(String jsonRecipe) {
         RecipeDetailFragment fragment = new RecipeDetailFragment();
         Bundle args = new Bundle();
-        args.putString(JSON_RECIPE_PARAM_KEY, jsonRecipe);
+        args.putString(EXTRA_JSON_RECIPE_KEY, jsonRecipe);
         fragment.setArguments(args);
         return fragment;
     }
@@ -39,8 +39,8 @@ public class RecipeDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            jsonRecipe = getArguments().getString(JSON_RECIPE_PARAM_KEY);
+        if (null != getArguments()) {
+            jsonRecipe = getArguments().getString(EXTRA_JSON_RECIPE_KEY);
             theRecipe = new Gson().fromJson(jsonRecipe, Recipe.class);
         }
     }

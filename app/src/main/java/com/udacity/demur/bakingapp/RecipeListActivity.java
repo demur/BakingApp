@@ -35,6 +35,15 @@ public class RecipeListActivity extends AppCompatActivity implements
 
     private static final String TAG = RecipeListActivity.class.getSimpleName();
 
+    public static final String SHARED_PREFS_NAME = "Settings";
+    public static final String SHARED_PREFS_LAST_SEEN_RECIPE_KEY = "last_seen_recipe_name";
+    public static final String SHARED_PREFS_LAST_SEEN_INGREDIENTS_KEY = "last_seen_recipe_ingredients_json";
+
+    public static final String EXTRA_JSON_RECIPE_KEY = "json_recipe";
+    public static final String EXTRA_RECIPE_NAME_KEY = "recipe_name";
+    public static final String EXTRA_JSON_STEP_KEY = "json_step";
+    public static final String EXTRA_STEP_NUMBER_KEY = "step_number";
+    public static final String EXTRA_OPENED_TAB_KEY = "opened_tab_key";
 
     private RecyclerView mRecyclerView;
     private final String LAYOUT_MANAGER_STATE_KEY = "layout_manager_state";
@@ -61,7 +70,7 @@ public class RecipeListActivity extends AppCompatActivity implements
         mStatusIcon = findViewById(R.id.iv_message_icon);
         mStatusMessage = findViewById(R.id.tv_message);
         mRecyclerView.setHasFixedSize(true);
-        mSharedPrefs = getApplicationContext().getSharedPreferences("Settings", MODE_PRIVATE);
+        mSharedPrefs = getApplicationContext().getSharedPreferences(SHARED_PREFS_NAME, MODE_PRIVATE);
         mSharedPrefs.registerOnSharedPreferenceChangeListener(this);
 
         mLayoutManager = new GridLayoutManager(this, Utilities.getGridLayoutColumnCount(this));
@@ -72,11 +81,12 @@ public class RecipeListActivity extends AppCompatActivity implements
 
         mClient = RetrofitClient.getInstance(getApplicationContext());
 
-        if (null != mRecipeList || (null != savedInstanceState
-                && savedInstanceState.containsKey(RECIPE_LIST_JSON_KEY)
-                && null != savedInstanceState.getString(RECIPE_LIST_JSON_KEY))) {
-            if (null == mRecipeList)
+        if (null != mRecipeList ||
+                (null != savedInstanceState && savedInstanceState.containsKey(RECIPE_LIST_JSON_KEY)
+                        && null != savedInstanceState.getString(RECIPE_LIST_JSON_KEY))) {
+            if (null == mRecipeList) {
                 mRecipeList = new Gson().fromJson(savedInstanceState.getString(RECIPE_LIST_JSON_KEY), listRecipeType);
+            }
             mRecipeAdapter.swapRecipeList(mRecipeList);
         } else {
             requestBakingJson(mClient.listRecipes(getResources().getString(R.string.json_recipe_source)));
@@ -108,7 +118,7 @@ public class RecipeListActivity extends AppCompatActivity implements
 
             @Override
             public void onFailure(@NonNull Call<List<Recipe>> call, @NonNull Throwable t) {
-                if (Utilities.isOnline(getApplicationContext())) {
+                if (Utilities.isOnline()) {
                     mStatusIcon.setImageResource(R.drawable.ic_error);
                     mStatusMessage.setText(R.string.error_problem_connecting);
                 } else {
@@ -126,12 +136,12 @@ public class RecipeListActivity extends AppCompatActivity implements
     @Override
     public void onClick(Recipe recipe) {
         Intent recipeDetailIntent = new Intent(this, RecipeDetailActivity.class);
-        recipeDetailIntent.putExtra("recipe", new Gson().toJson(recipe));
-        recipeDetailIntent.putExtra("recipe_name", recipe.getName());
+        recipeDetailIntent.putExtra(EXTRA_JSON_RECIPE_KEY, new Gson().toJson(recipe));
+        recipeDetailIntent.putExtra(EXTRA_RECIPE_NAME_KEY, recipe.getName());
         mSharedPrefs
                 .edit()
-                .putString("last_seen_recipe_name", recipe.getName())
-                .putString("last_seen_recipe_ingredients_json", new Gson().toJson(recipe.getIngredients()))
+                .putString(SHARED_PREFS_LAST_SEEN_RECIPE_KEY, recipe.getName())
+                .putString(SHARED_PREFS_LAST_SEEN_INGREDIENTS_KEY, new Gson().toJson(recipe.getIngredients()))
                 .apply();
 
         startActivity(recipeDetailIntent);

@@ -15,10 +15,10 @@ import com.udacity.demur.bakingapp.adapter.StepsPagerAdapter;
 import com.udacity.demur.bakingapp.model.Recipe;
 import com.udacity.demur.bakingapp.model.RecipeStep;
 
-public class RecipeStepsFragment extends Fragment {
+import static com.udacity.demur.bakingapp.RecipeListActivity.EXTRA_JSON_RECIPE_KEY;
+import static com.udacity.demur.bakingapp.RecipeListActivity.EXTRA_OPENED_TAB_KEY;
 
-    private static final String JSON_RECIPE_PARAM_KEY = "json_recipe_key";
-    private static final String OPENED_TAB_PARAM_KEY = "opened_tab_key";
+public class RecipeStepsFragment extends Fragment {
 
     private String jsonRecipe;
     private Recipe theRecipe;
@@ -35,8 +35,8 @@ public class RecipeStepsFragment extends Fragment {
     public static RecipeStepsFragment newInstance(String jsonRecipe) {
         RecipeStepsFragment fragment = new RecipeStepsFragment();
         Bundle args = new Bundle();
-        args.putString(JSON_RECIPE_PARAM_KEY, jsonRecipe);
-        args.putInt(OPENED_TAB_PARAM_KEY, 0);
+        args.putString(EXTRA_JSON_RECIPE_KEY, jsonRecipe);
+        args.putInt(EXTRA_OPENED_TAB_KEY, 0);
         fragment.setArguments(args);
         return fragment;
     }
@@ -44,8 +44,8 @@ public class RecipeStepsFragment extends Fragment {
     public static RecipeStepsFragment newInstance(String jsonRecipe, int openedTab) {
         RecipeStepsFragment fragment = new RecipeStepsFragment();
         Bundle args = new Bundle();
-        args.putString(JSON_RECIPE_PARAM_KEY, jsonRecipe);
-        args.putInt(OPENED_TAB_PARAM_KEY, openedTab);
+        args.putString(EXTRA_JSON_RECIPE_KEY, jsonRecipe);
+        args.putInt(EXTRA_OPENED_TAB_KEY, openedTab);
         fragment.setArguments(args);
         return fragment;
     }
@@ -53,10 +53,10 @@ public class RecipeStepsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            jsonRecipe = getArguments().getString(JSON_RECIPE_PARAM_KEY);
+        if (null != getArguments()) {
+            jsonRecipe = getArguments().getString(EXTRA_JSON_RECIPE_KEY);
             theRecipe = new Gson().fromJson(jsonRecipe, Recipe.class);
-            mOpenedTab = getArguments().getInt(OPENED_TAB_PARAM_KEY);
+            mOpenedTab = getArguments().getInt(EXTRA_OPENED_TAB_KEY);
         }
     }
 
@@ -89,14 +89,18 @@ public class RecipeStepsFragment extends Fragment {
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        if (mStepsPagerAdapter == null) {
+        if (null == mStepsPagerAdapter) {
             mStepsPagerAdapter = new StepsPagerAdapter(getFragmentManager());
             if (null != theRecipe.getSteps()) {
                 for (RecipeStep step : theRecipe.getSteps()) {
-                    if (step.getId() == 0 && step.getShortDescription().contains("Intro")) {
-                        mStepsPagerAdapter.addFragment(RecipeSingleStepFragment.newInstance(new Gson().toJson(step)), getString(R.string.tab_name_intro));
+                    if (step.getId() == 0 && step.getShortDescription().contains(getString(R.string.tab_name_intro))) {
+                        mStepsPagerAdapter.addFragment(
+                                RecipeSingleStepFragment.newInstance(new Gson().toJson(step)),
+                                getString(R.string.tab_name_intro));
                     } else {
-                        mStepsPagerAdapter.addFragment(RecipeSingleStepFragment.newInstance(new Gson().toJson(step)), getString(R.string.tab_name_step, step.getId()));
+                        mStepsPagerAdapter.addFragment(
+                                RecipeSingleStepFragment.newInstance(new Gson().toJson(step)),
+                                getString(R.string.tab_name_step, step.getId()));
                     }
                 }
             }

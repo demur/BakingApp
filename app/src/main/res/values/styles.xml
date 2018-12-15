@@ -12,7 +12,10 @@
         <item name="android:layout_height">@dimen/recycler_view_height</item>
         <item name="android:scrollbars">vertical</item>
         <item name="android:clipToPadding">true</item>
-        <item name="android:padding">@dimen/recipe_list_item_offset</item>
+        <item name="android:paddingStart">@dimen/recipe_list_item_offset</item>
+        <item name="android:paddingLeft">@dimen/recipe_list_item_offset</item>
+        <item name="android:paddingRight">@dimen/recipe_list_item_offset</item>
+        <item name="android:paddingEnd">@dimen/recipe_list_item_offset</item>
     </style>
 
     <style name="LoadingIndicator" parent="Widget.AppCompat.ProgressBar">
@@ -44,10 +47,10 @@
         <item name="tabSelectedTextColor">@android:color/white</item>
         <item name="android:layout_width">@dimen/tabs_width</item>
         <item name="android:layout_height">@dimen/tabs_height</item>
-        <item name="android:layout_marginEnd" tools:ignore="NewApi">@dimen/sv_margin_start</item>
+        <item name="android:layout_marginEnd">@dimen/sv_margin_start</item>
         <item name="android:layout_marginLeft">@dimen/sv_margin_start</item>
         <item name="android:layout_marginRight">@dimen/sv_margin_start</item>
-        <item name="android:layout_marginStart" tools:ignore="NewApi">@dimen/sv_margin_start</item>
+        <item name="android:layout_marginStart">@dimen/sv_margin_start</item>
         <item name="android:elevation" tools:ignore="NewApi">@dimen/tabs_elevation</item>
         <item name="layout_constrainedWidth">true</item>
         <item name="layout_constraintEnd_toEndOf">parent</item>

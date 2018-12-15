@@ -1,14 +1,9 @@
 package com.udacity.demur.bakingapp.adapter;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.text.SpannableString;
 import android.text.TextUtils;
-import android.text.style.BulletSpan;
-import android.text.style.RelativeSizeSpan;
-import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +19,9 @@ import com.udacity.demur.bakingapp.model.RecipeStep;
 
 import java.util.Locale;
 
+import static com.udacity.demur.bakingapp.service.Utilities.getBulletItem;
+import static com.udacity.demur.bakingapp.service.Utilities.getLargeBoldItalic;
+
 public class RecipeDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final String TAG = RecipeDetailAdapter.class.getSimpleName();
     private final Recipe theRecipe;
@@ -34,13 +32,16 @@ public class RecipeDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private int selectedItemPos = RecyclerView.NO_POSITION;
     private boolean mTwoPane = false;
 
-    public RecipeDetailAdapter(Recipe recipe, RecipeDetailFragment.OnRecyclerViewDetailFragmentClickListener listener) {
+    public RecipeDetailAdapter(@NonNull Recipe recipe,
+                               RecipeDetailFragment.OnRecyclerViewDetailFragmentClickListener listener) {
         theRecipe = recipe;
         mListener = listener;
         isIngredientsCard = null != theRecipe.getIngredients() && theRecipe.getIngredients().size() > 0;
     }
 
-    public RecipeDetailAdapter(Recipe recipe, RecipeDetailFragment.OnRecyclerViewDetailFragmentClickListener listener, boolean isTwoPane) {
+    public RecipeDetailAdapter(Recipe recipe,
+                               RecipeDetailFragment.OnRecyclerViewDetailFragmentClickListener listener,
+                               boolean isTwoPane) {
         theRecipe = recipe;
         mListener = listener;
         isIngredientsCard = null != theRecipe.getIngredients() && theRecipe.getIngredients().size() > 0;
@@ -73,24 +74,20 @@ public class RecipeDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         final Context context = holder.itemView.getContext();
         switch (holder.getItemViewType()) {
             case INGREDIENTS_VIEW_TYPE:
-                /*
-                 * The idea how to display bulleted list was publish by Diego Frehner at
-                 * https://stackoverflow.com/a/6954941
-                 * */
                 IngredientsViewHolder ingredientsHolder = (IngredientsViewHolder) holder;
-                CharSequence ingredientList = "Ingredients:";
-                SpannableString spannableString = new SpannableString(ingredientList);
-                spannableString.setSpan(new StyleSpan(Typeface.BOLD_ITALIC), 0, ingredientList.length(), 0);
-                spannableString.setSpan(new RelativeSizeSpan(1.35f), 0, ingredientList.length(), 0);
-                ingredientList = TextUtils.concat("", spannableString);
+                CharSequence ingredientList = TextUtils.concat("",
+                        getLargeBoldItalic(context.getString(R.string.ingredients_title)));
                 for (RecipeIngredient ingredient : theRecipe.getIngredients()) {
-                    CharSequence ingredientItem = context.getString(R.string.ingredient_item,
-                            ingredient.getIngredient(),
-                            ingredient.getQuantity() % 1.0 == 0 ? String.format(Locale.getDefault(), "%.0f", ingredient.getQuantity()) : String.format("%s", ingredient.getQuantity()),
-                            ingredient.getMeasure());
-                    spannableString = new SpannableString(ingredientItem);
-                    spannableString.setSpan(new BulletSpan(15), 0, ingredientItem.length(), 0);
-                    ingredientList = TextUtils.concat(ingredientList, "\n", spannableString);
+                    ingredientList = TextUtils.concat(ingredientList, "\n",
+                            getBulletItem(context.getString(
+                                    R.string.ingredient_item,
+                                    ingredient.getIngredient(),
+                                    ingredient.getQuantity() % 1.0 == 0
+                                            ? String.format(Locale.getDefault(), "%.0f", ingredient.getQuantity())
+                                            : String.format("%s", ingredient.getQuantity()),
+                                    ingredient.getMeasure()
+                            ))
+                    );
                 }
                 ingredientsHolder.tvIngredients.setText(ingredientList);
                 break;
@@ -98,27 +95,27 @@ public class RecipeDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             default:
                 final RecipeStep step = theRecipe.getSteps().get(isIngredientsCard ? position - 1 : position);
                 RecipeDetailAdapterViewHolder commonHolder = (RecipeDetailAdapterViewHolder) holder;
-                if ((position == 0 && !isIngredientsCard) || (position == 1 && isIngredientsCard))
+                if ((position == 0 && !isIngredientsCard) || (position == 1 && isIngredientsCard)) {
                     commonHolder.tvStepName.setText(step.getShortDescription().replaceAll("\\.+$", ""));
-                else
+                } else {
                     commonHolder.tvStepName.setText(context.getString(R.string.step_name_rv_item, step.getId(), step.getShortDescription().replaceAll("\\.+$", "")));
-                if (!step.getVideoURL().isEmpty())
-                    commonHolder.ivPlayIcon.setVisibility(View.VISIBLE);
-                else
-                    commonHolder.ivPlayIcon.setVisibility(View.INVISIBLE);
-                if (null != step.getThumbnailURL() && !step.getThumbnailURL().isEmpty())
+                }
+                commonHolder.ivPlayIcon.setVisibility(TextUtils.isEmpty(step.getVideoURL()) ? View.INVISIBLE : View.VISIBLE);
+                if (!TextUtils.isEmpty(step.getThumbnailURL())) {
                     Picasso.get().load(step.getThumbnailURL())
                             .noPlaceholder().error(R.drawable.ic_broken_image)
                             .fit().centerInside().into(commonHolder.ivThumb);
-                else if (position % 2 == 0)
+                } else if (position % 2 == 0) {
                     commonHolder.ivThumb.setScaleX(-1);
+                }
         }
     }
 
     @Override
     public int getItemCount() {
-        if (null == theRecipe || null == theRecipe.getSteps())
+        if (null == theRecipe || null == theRecipe.getSteps()) {
             return isIngredientsCard ? 1 : 0;
+        }
         return theRecipe.getSteps().size() + (isIngredientsCard ? 1 : 0);
     }
 
@@ -153,8 +150,9 @@ public class RecipeDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             setSelectedItemPos(position);
             if (position != RecyclerView.NO_POSITION) {
                 if (null != mListener) {
-                    if (isIngredientsCard)
+                    if (isIngredientsCard) {
                         position--;
+                    }
                     mListener.onRecyclerViewFragmentInteraction(position);
                 }
             }

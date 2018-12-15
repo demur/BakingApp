@@ -20,7 +20,7 @@ public class RetrofitClient {
     private static OkHttpClient sOkHttpInstance;
 
     public static BakingJsonClient getInstance(Context context) {
-        if (sInstance == null) {
+        if (null == sInstance) {
             synchronized (LOCK) {
                 Log.d(TAG, "Creating new RetrofitClient instance");
                 try {

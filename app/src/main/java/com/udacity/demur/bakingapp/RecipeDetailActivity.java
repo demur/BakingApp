@@ -12,6 +12,10 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.udacity.demur.bakingapp.model.Recipe;
 
+import static com.udacity.demur.bakingapp.service.Constant.EXTRA_JSON_RECIPE_KEY;
+import static com.udacity.demur.bakingapp.service.Constant.EXTRA_RECIPE_NAME_KEY;
+import static com.udacity.demur.bakingapp.service.Constant.EXTRA_STEP_NUMBER_KEY;
+
 public class RecipeDetailActivity extends AppCompatActivity implements
         RecipeDetailFragment.OnRecyclerViewDetailFragmentClickListener,
         RecipeStepsFragment.OnStepTabFragmentChangeListener {
@@ -25,15 +29,15 @@ public class RecipeDetailActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (null != getIntent().getExtras() && getIntent().hasExtra(RecipeListActivity.EXTRA_JSON_RECIPE_KEY)) {
+        if (null != getIntent().getExtras() && getIntent().hasExtra(EXTRA_JSON_RECIPE_KEY)) {
             setContentView(R.layout.activity_recipe_detail);
             if (null != getSupportActionBar()) {
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             }
 
-            jsonRecipe = getIntent().getStringExtra(RecipeListActivity.EXTRA_JSON_RECIPE_KEY);
-            if (getIntent().hasExtra(RecipeListActivity.EXTRA_RECIPE_NAME_KEY)) {
-                recipeName = getIntent().getStringExtra(RecipeListActivity.EXTRA_RECIPE_NAME_KEY);
+            jsonRecipe = getIntent().getStringExtra(EXTRA_JSON_RECIPE_KEY);
+            if (getIntent().hasExtra(EXTRA_RECIPE_NAME_KEY)) {
+                recipeName = getIntent().getStringExtra(EXTRA_RECIPE_NAME_KEY);
             }
             if (null == recipeName) {
                 recipeName = (new Gson().fromJson(jsonRecipe, Recipe.class)).getName();
@@ -85,9 +89,9 @@ public class RecipeDetailActivity extends AppCompatActivity implements
     public void onRecyclerViewFragmentInteraction(int position) {
         if (!mTwoPane) {
             Intent recipeStepsIntent = new Intent(this, RecipeStepsActivity.class);
-            recipeStepsIntent.putExtra(RecipeListActivity.EXTRA_JSON_RECIPE_KEY, jsonRecipe);
-            recipeStepsIntent.putExtra(RecipeListActivity.EXTRA_RECIPE_NAME_KEY, recipeName);
-            recipeStepsIntent.putExtra(RecipeListActivity.EXTRA_STEP_NUMBER_KEY, position);
+            recipeStepsIntent.putExtra(EXTRA_JSON_RECIPE_KEY, jsonRecipe);
+            recipeStepsIntent.putExtra(EXTRA_RECIPE_NAME_KEY, recipeName);
+            recipeStepsIntent.putExtra(EXTRA_STEP_NUMBER_KEY, position);
 
             startActivity(recipeStepsIntent);
         } else {

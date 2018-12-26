@@ -4,22 +4,21 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.udacity.demur.bakingapp.adapter.RecipeAdapter;
+import com.udacity.demur.bakingapp.databinding.ActivityRecipeListBinding;
 import com.udacity.demur.bakingapp.model.Recipe;
 import com.udacity.demur.bakingapp.service.BakingJsonClient;
+import com.udacity.demur.bakingapp.service.RecyclerViewStateHelper;
 import com.udacity.demur.bakingapp.service.RetrofitClient;
 import com.udacity.demur.bakingapp.service.Utilities;
 
@@ -29,23 +28,18 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 
+import static com.udacity.demur.bakingapp.service.Constant.EXTRA_JSON_RECIPE_KEY;
+import static com.udacity.demur.bakingapp.service.Constant.EXTRA_RECIPE_NAME_KEY;
+import static com.udacity.demur.bakingapp.service.Constant.SHARED_PREFS_LAST_SEEN_INGREDIENTS_KEY;
+import static com.udacity.demur.bakingapp.service.Constant.SHARED_PREFS_LAST_SEEN_RECIPE_KEY;
+import static com.udacity.demur.bakingapp.service.Constant.SHARED_PREFS_NAME;
+
 public class RecipeListActivity extends AppCompatActivity implements
         RecipeAdapter.RecipeAdapterOnClickHandler,
         SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = RecipeListActivity.class.getSimpleName();
 
-    public static final String SHARED_PREFS_NAME = "Settings";
-    public static final String SHARED_PREFS_LAST_SEEN_RECIPE_KEY = "last_seen_recipe_name";
-    public static final String SHARED_PREFS_LAST_SEEN_INGREDIENTS_KEY = "last_seen_recipe_ingredients_json";
-
-    public static final String EXTRA_JSON_RECIPE_KEY = "json_recipe";
-    public static final String EXTRA_RECIPE_NAME_KEY = "recipe_name";
-    public static final String EXTRA_JSON_STEP_KEY = "json_step";
-    public static final String EXTRA_STEP_NUMBER_KEY = "step_number";
-    public static final String EXTRA_OPENED_TAB_KEY = "opened_tab_key";
-
-    private RecyclerView mRecyclerView;
     private final String LAYOUT_MANAGER_STATE_KEY = "layout_manager_state";
     private final String RECIPE_LIST_JSON_KEY = "recipe_list_json";
     private Parcelable mLayoutManagerState;
@@ -54,30 +48,26 @@ public class RecipeListActivity extends AppCompatActivity implements
     private RecipeAdapter mRecipeAdapter;
     private SharedPreferences mSharedPrefs;
     private BakingJsonClient mClient;
-    private ProgressBar mLoadingIndicator;
-    private ImageView mStatusIcon;
-    private TextView mStatusMessage;
 
     private Type listRecipeType = new TypeToken<List<Recipe>>() {}.getType();
+    private ActivityRecipeListBinding mBinding;
+    private RecyclerViewStateHelper rvHelper = new RecyclerViewStateHelper();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recipe_list);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_recipe_list);
+        mBinding.setRvHelper(rvHelper);
 
-        mRecyclerView = findViewById(R.id.rv_recipe_list);
-        mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
-        mStatusIcon = findViewById(R.id.iv_message_icon);
-        mStatusMessage = findViewById(R.id.tv_message);
-        mRecyclerView.setHasFixedSize(true);
+        mBinding.rvRecipeList.setHasFixedSize(true);
         mSharedPrefs = getApplicationContext().getSharedPreferences(SHARED_PREFS_NAME, MODE_PRIVATE);
         mSharedPrefs.registerOnSharedPreferenceChangeListener(this);
 
         mLayoutManager = new GridLayoutManager(this, Utilities.getGridLayoutColumnCount(this));
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        //mRecyclerView.addItemDecoration(new RecipeAdapter.ItemOffsetDecoration(this, R.dimen.recipe_list_item_offset));
+        mBinding.rvRecipeList.setLayoutManager(mLayoutManager);
+        //mBinding.rvRecipeList.addItemDecoration(new RecipeAdapter.ItemOffsetDecoration(this, R.dimen.recipe_list_item_offset));
         mRecipeAdapter = new RecipeAdapter(this, this);
-        mRecyclerView.setAdapter(mRecipeAdapter);
+        mBinding.rvRecipeList.setAdapter(mRecipeAdapter);
 
         mClient = RetrofitClient.getInstance(getApplicationContext());
 
@@ -94,41 +84,35 @@ public class RecipeListActivity extends AppCompatActivity implements
     }
 
     public void requestBakingJson(Call<List<Recipe>> call) {
-        mLoadingIndicator.setVisibility(View.VISIBLE);
-        mStatusIcon.setVisibility(View.INVISIBLE);
-        mStatusMessage.setVisibility(View.INVISIBLE);
-        mRecyclerView.setVisibility(View.INVISIBLE);
+        rvHelper.setLoadingState(true);
+        rvHelper.setErrorState(false);
         call.enqueue(new Callback<List<Recipe>>() {
             @Override
             public void onResponse(@NonNull Call<List<Recipe>> call, @NonNull retrofit2.Response<List<Recipe>> response) {
-                mLoadingIndicator.setVisibility(View.INVISIBLE);
+                rvHelper.setLoadingState(false);
                 if (response.code() == 200) {
                     mRecipeList = response.body();
                     mRecipeAdapter.swapRecipeList(mRecipeList);
-                    mRecyclerView.scrollToPosition(0);
-                    mRecyclerView.setVisibility(View.VISIBLE);
+                    mBinding.rvRecipeList.scrollToPosition(0);
+                    rvHelper.setErrorState(false);
                 } else {
-                    mStatusIcon.setImageResource(R.drawable.ic_error_outline);
-                    mStatusMessage.setText(R.string.error_unexpected_response);
-                    mRecyclerView.setVisibility(View.INVISIBLE);
-                    mStatusMessage.setVisibility(View.VISIBLE);
-                    mStatusIcon.setVisibility(View.VISIBLE);
+                    mBinding.ivMessageIcon.setImageResource(R.drawable.ic_error_outline);
+                    mBinding.tvMessage.setText(R.string.error_unexpected_response);
+                    rvHelper.setErrorState(true);
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<List<Recipe>> call, @NonNull Throwable t) {
                 if (Utilities.isOnline()) {
-                    mStatusIcon.setImageResource(R.drawable.ic_error);
-                    mStatusMessage.setText(R.string.error_problem_connecting);
+                    mBinding.ivMessageIcon.setImageResource(R.drawable.ic_error);
+                    mBinding.tvMessage.setText(R.string.error_problem_connecting);
                 } else {
-                    mStatusIcon.setImageResource(R.drawable.ic_warning);
-                    mStatusMessage.setText(R.string.error_no_connection);
+                    mBinding.ivMessageIcon.setImageResource(R.drawable.ic_warning);
+                    mBinding.tvMessage.setText(R.string.error_no_connection);
                 }
-                mLoadingIndicator.setVisibility(View.INVISIBLE);
-                mRecyclerView.setVisibility(View.INVISIBLE);
-                mStatusMessage.setVisibility(View.VISIBLE);
-                mStatusIcon.setVisibility(View.VISIBLE);
+                rvHelper.setLoadingState(false);
+                rvHelper.setErrorState(true);
             }
         });
     }

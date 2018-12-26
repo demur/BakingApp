@@ -2,10 +2,10 @@ package com.udacity.demur.bakingapp;
 
 import android.app.Dialog;
 import android.content.res.Configuration;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -25,20 +24,20 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.gson.Gson;
+import com.udacity.demur.bakingapp.databinding.FragmentRecipeSingleStepBinding;
 import com.udacity.demur.bakingapp.model.RecipeStep;
 
 import static android.support.constraint.ConstraintSet.END;
 import static android.support.constraint.ConstraintSet.MATCH_CONSTRAINT;
 import static android.support.constraint.ConstraintSet.START;
 import static android.support.constraint.ConstraintSet.TOP;
-import static com.udacity.demur.bakingapp.RecipeListActivity.EXTRA_JSON_STEP_KEY;
+import static com.udacity.demur.bakingapp.service.Constant.EXTRA_JSON_STEP_KEY;
 
 /*
  * The idea how to use Dialog to open ExoPlayer in fullscreen mode was published by GeoffLedak at
@@ -56,7 +55,6 @@ public class RecipeSingleStepFragment extends Fragment {
     private String jsonRecipeStep;
     private RecipeStep theRecipeStep;
     private SimpleExoPlayer mPlayer;
-    private PlayerView mPlayerView;
     private boolean mExoPlayerFullscreen = false;
     private ImageView mFullScreenIcon;
     private FrameLayout mFullScreenButton;
@@ -64,10 +62,11 @@ public class RecipeSingleStepFragment extends Fragment {
 
     private int mResumeWindow;
     private long mResumePosition;
-    private ConstraintLayout mPlayerViewParentView;
     private boolean mPlayWhenReadyState = false;
     private boolean mFragmentVisibilityState;
     private boolean mFailedResumeAttempt = false;
+
+    private FragmentRecipeSingleStepBinding mBinding;
 
     public RecipeSingleStepFragment() {
         // Required empty public constructor
@@ -99,23 +98,20 @@ public class RecipeSingleStepFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_recipe_single_step, container, false);
-        TextView tvRecipeStep = view.findViewById(R.id.recipe_step_desc);
-        tvRecipeStep.setText(theRecipeStep.getDescription());
-        mPlayerView = view.findViewById(R.id.recipe_step_video);
-        mPlayerViewParentView = view.findViewById(R.id.cl_step_container);
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_single_step, container, false);
+        mBinding.recipeStepDesc.setText(theRecipeStep.getDescription());
         if (null != theRecipeStep.getVideoURL() && !theRecipeStep.getVideoURL().isEmpty()) {
-            mPlayerView.setVisibility(View.VISIBLE);
+            mBinding.recipeStepVideo.setVisibility(View.VISIBLE);
             //initPlayer(theRecipeStep.getVideoURL());
         } else {
-            mPlayerView.setVisibility(View.GONE);
-            mPlayerView = null;
+            mBinding.recipeStepVideo.setVisibility(View.GONE);
         }
-        return view;
+        return mBinding.getRoot();
     }
 
     private void initPlayer(String videoURL) {
-        if (null == mPlayer && null != mPlayerView) {
+        if (null == mPlayer && null != mBinding && null != mBinding.recipeStepVideo
+                && mBinding.recipeStepVideo.getVisibility() != View.GONE) {
             //Handler mainHandler = new Handler();
             BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
             TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
@@ -123,10 +119,10 @@ public class RecipeSingleStepFragment extends Fragment {
 
             mPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector);
 
-            mPlayerView.setUseController(true);
-            mPlayerView.requestFocus();
+            mBinding.recipeStepVideo.setUseController(true);
+            mBinding.recipeStepVideo.requestFocus();
 
-            mPlayerView.setPlayer(mPlayer);
+            mBinding.recipeStepVideo.setPlayer(mPlayer);
 
             DefaultBandwidthMeter defaultBandwidthMeter = new DefaultBandwidthMeter();
 
@@ -194,8 +190,8 @@ public class RecipeSingleStepFragment extends Fragment {
     }
 
     private void openFullscreenDialog() {
-        ((ViewGroup) mPlayerView.getParent()).removeView(mPlayerView);
-        mFullScreenDialog.addContentView(mPlayerView,
+        ((ViewGroup) mBinding.recipeStepVideo.getParent()).removeView(mBinding.recipeStepVideo);
+        mFullScreenDialog.addContentView(mBinding.recipeStepVideo,
                 new ViewGroup.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT));
@@ -205,19 +201,19 @@ public class RecipeSingleStepFragment extends Fragment {
     }
 
     private void closeFullscreenDialog() {
-        ((ViewGroup) mPlayerView.getParent()).removeView(mPlayerView);
-        mPlayerViewParentView.addView(mPlayerView);
-        mPlayerView.getLayoutParams().width = LinearLayout.LayoutParams.MATCH_PARENT;
-        mPlayerView.getLayoutParams().height = 0;
+        ((ViewGroup) mBinding.recipeStepVideo.getParent()).removeView(mBinding.recipeStepVideo);
+        mBinding.clStepContainer.addView(mBinding.recipeStepVideo);
+        mBinding.recipeStepVideo.getLayoutParams().width = LinearLayout.LayoutParams.MATCH_PARENT;
+        mBinding.recipeStepVideo.getLayoutParams().height = 0;
         ConstraintSet set = new ConstraintSet();
-        set.setDimensionRatio(mPlayerView.getId(), "W,9:16");
-        set.constrainWidth(mPlayerView.getId(), MATCH_CONSTRAINT);
+        set.setDimensionRatio(mBinding.recipeStepVideo.getId(), "W,9:16");
+        set.constrainWidth(mBinding.recipeStepVideo.getId(), MATCH_CONSTRAINT);
         int pixelMargin = getResources().getDimensionPixelSize(R.dimen.player_view_margin);
-        set.connect(mPlayerView.getId(), START, mPlayerViewParentView.getId(), START, pixelMargin);
-        set.connect(mPlayerView.getId(), END, mPlayerViewParentView.getId(), END, pixelMargin);
-        set.constrainHeight(mPlayerView.getId(), MATCH_CONSTRAINT);
-        set.connect(mPlayerView.getId(), TOP, mPlayerViewParentView.getId(), TOP, pixelMargin);
-        set.applyTo(mPlayerViewParentView);
+        set.connect(mBinding.recipeStepVideo.getId(), START, mBinding.clStepContainer.getId(), START, pixelMargin);
+        set.connect(mBinding.recipeStepVideo.getId(), END, mBinding.clStepContainer.getId(), END, pixelMargin);
+        set.constrainHeight(mBinding.recipeStepVideo.getId(), MATCH_CONSTRAINT);
+        set.connect(mBinding.recipeStepVideo.getId(), TOP, mBinding.clStepContainer.getId(), TOP, pixelMargin);
+        set.applyTo(mBinding.clStepContainer);
 
         mExoPlayerFullscreen = false;
         mFullScreenDialog.dismiss();
@@ -225,8 +221,8 @@ public class RecipeSingleStepFragment extends Fragment {
     }
 
     private void initFullscreenButton() {
-        mFullScreenIcon = mPlayerView.findViewById(R.id.exo_fullscreen_icon);
-        mFullScreenButton = mPlayerView.findViewById(R.id.exo_fullscreen_button);
+        mFullScreenIcon = mBinding.recipeStepVideo.findViewById(R.id.exo_fullscreen_icon);
+        mFullScreenButton = mBinding.recipeStepVideo.findViewById(R.id.exo_fullscreen_button);
         mFullScreenButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -239,7 +235,9 @@ public class RecipeSingleStepFragment extends Fragment {
     }
 
     private void resumePlayer() {
-        if (mFragmentVisibilityState && null != theRecipeStep && null != mPlayerView) {
+        if (mFragmentVisibilityState && null != theRecipeStep
+                && null != mBinding && null != mBinding.recipeStepVideo
+                && mBinding.recipeStepVideo.getVisibility() != View.GONE) {
             if (null == mPlayer)
                 initPlayer(theRecipeStep.getVideoURL());
             boolean haveResumePosition = mResumeWindow != C.INDEX_UNSET;
@@ -251,8 +249,9 @@ public class RecipeSingleStepFragment extends Fragment {
             if (mExoPlayerFullscreen || (getActivity() instanceof RecipeStepsActivity
                     && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE))
                 openFullscreenDialog();
-        } else
+        } else {
             mFailedResumeAttempt = true;
+        }
     }
 
     @Override
@@ -269,7 +268,8 @@ public class RecipeSingleStepFragment extends Fragment {
     }
 
     private void releasePlayer() {
-        if (null != mPlayerView && null != mPlayer) {
+        if (null != mPlayer && null != mBinding && null != mBinding.recipeStepVideo
+                && mBinding.recipeStepVideo.getVisibility() != View.GONE) {
             mResumeWindow = mPlayer.getCurrentWindowIndex();
             mResumePosition = Math.max(0, mPlayer.getContentPosition());
             mPlayWhenReadyState = mPlayer.getPlayWhenReady();

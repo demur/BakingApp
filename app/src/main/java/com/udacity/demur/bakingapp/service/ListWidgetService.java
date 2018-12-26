@@ -11,7 +11,6 @@ import android.widget.RemoteViewsService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.udacity.demur.bakingapp.R;
-import com.udacity.demur.bakingapp.RecipeListActivity;
 import com.udacity.demur.bakingapp.model.RecipeIngredient;
 
 import java.lang.reflect.Type;
@@ -19,6 +18,8 @@ import java.util.List;
 import java.util.Locale;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.udacity.demur.bakingapp.service.Constant.SHARED_PREFS_LAST_SEEN_INGREDIENTS_KEY;
+import static com.udacity.demur.bakingapp.service.Constant.SHARED_PREFS_NAME;
 import static com.udacity.demur.bakingapp.service.Utilities.getBulletItem;
 
 public class ListWidgetService extends RemoteViewsService {
@@ -37,7 +38,7 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     ListRemoteViewsFactory(Context applicationContext) {
         mContext = applicationContext;
-        mSharedPrefs = applicationContext.getSharedPreferences(RecipeListActivity.SHARED_PREFS_NAME, MODE_PRIVATE);
+        mSharedPrefs = applicationContext.getSharedPreferences(SHARED_PREFS_NAME, MODE_PRIVATE);
     }
 
     @Override
@@ -47,7 +48,7 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public void onDataSetChanged() {
-        String jsonString = mSharedPrefs.getString(RecipeListActivity.SHARED_PREFS_LAST_SEEN_INGREDIENTS_KEY, "");
+        String jsonString = mSharedPrefs.getString(SHARED_PREFS_LAST_SEEN_INGREDIENTS_KEY, "");
         if (!TextUtils.isEmpty(jsonString)) {
             mList = new Gson().fromJson(jsonString, listIngredientType);
         } else {

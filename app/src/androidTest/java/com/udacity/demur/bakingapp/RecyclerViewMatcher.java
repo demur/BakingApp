@@ -47,15 +47,17 @@ public class RecyclerViewMatcher {
                             view.getRootView().findViewById(recyclerViewId);
                     if (recyclerView != null && recyclerView.getId() == recyclerViewId) {
                         RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(position);
-                        if (viewHolder != null)
+                        if (viewHolder != null) {
                             childView = viewHolder.itemView;
-                    } else
+                        }
+                    } else {
                         return false;
+                    }
                 }
 
-                if (targetViewId == -1)
+                if (targetViewId == -1) {
                     return view == childView;
-                else {
+                } else {
                     View targetView = childView.findViewById(targetViewId);
                     return view == targetView;
                 }

@@ -14,7 +14,7 @@ import com.google.gson.Gson;
 import com.udacity.demur.bakingapp.adapter.RecipeDetailAdapter;
 import com.udacity.demur.bakingapp.model.Recipe;
 
-import static com.udacity.demur.bakingapp.RecipeListActivity.EXTRA_JSON_RECIPE_KEY;
+import static com.udacity.demur.bakingapp.service.Constant.EXTRA_JSON_RECIPE_KEY;
 
 public class RecipeDetailFragment extends Fragment {
 

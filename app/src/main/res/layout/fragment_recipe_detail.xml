@@ -5,7 +5,9 @@
     android:name="com.udacity.demur.bakingapp.RecipeDetailFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginStart="16dp"
     android:layout_marginLeft="16dp"
+    android:layout_marginEnd="16dp"
     android:layout_marginRight="16dp"
     tools:context=".RecipeDetailFragment"
     tools:listitem="@layout/recipe_detail_rv_item" />

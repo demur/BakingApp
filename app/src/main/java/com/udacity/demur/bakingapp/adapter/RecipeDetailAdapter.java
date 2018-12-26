@@ -1,18 +1,19 @@
 package com.udacity.demur.bakingapp.adapter;
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.udacity.demur.bakingapp.R;
 import com.udacity.demur.bakingapp.RecipeDetailFragment;
+import com.udacity.demur.bakingapp.databinding.RecipeDetailRvItemBinding;
+import com.udacity.demur.bakingapp.databinding.RecipeIngredientsRvItemBinding;
 import com.udacity.demur.bakingapp.model.Recipe;
 import com.udacity.demur.bakingapp.model.RecipeIngredient;
 import com.udacity.demur.bakingapp.model.RecipeStep;
@@ -51,18 +52,25 @@ public class RecipeDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view;
         switch (viewType) {
             case INGREDIENTS_VIEW_TYPE:
-                view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.recipe_ingredients_rv_item, parent, false);
-                return new IngredientsViewHolder(view);
+                RecipeIngredientsRvItemBinding ingredientsBinding = DataBindingUtil.inflate(
+                        LayoutInflater.from(parent.getContext()),
+                        R.layout.recipe_ingredients_rv_item,
+                        parent,
+                        false
+                );
+                return new IngredientsViewHolder(ingredientsBinding);
             case COMMON_VIEW_TYPE:
             default:
-                view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.recipe_detail_rv_item, parent, false);
-                view.setFocusable(true);
-                return new RecipeDetailAdapterViewHolder(view);
+                RecipeDetailRvItemBinding detailBinding = DataBindingUtil.inflate(
+                        LayoutInflater.from(parent.getContext()),
+                        R.layout.recipe_detail_rv_item,
+                        parent,
+                        false
+                );
+                detailBinding.getRoot().setFocusable(true);
+                return new RecipeDetailAdapterViewHolder(detailBinding);
         }
     }
 
@@ -89,24 +97,24 @@ public class RecipeDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             ))
                     );
                 }
-                ingredientsHolder.tvIngredients.setText(ingredientList);
+                ingredientsHolder.binding.tvIngredients.setText(ingredientList);
                 break;
             case COMMON_VIEW_TYPE:
             default:
                 final RecipeStep step = theRecipe.getSteps().get(isIngredientsCard ? position - 1 : position);
                 RecipeDetailAdapterViewHolder commonHolder = (RecipeDetailAdapterViewHolder) holder;
                 if ((position == 0 && !isIngredientsCard) || (position == 1 && isIngredientsCard)) {
-                    commonHolder.tvStepName.setText(step.getShortDescription().replaceAll("\\.+$", ""));
+                    commonHolder.binding.tvStepName.setText(step.getShortDescription().replaceAll("\\.+$", ""));
                 } else {
-                    commonHolder.tvStepName.setText(context.getString(R.string.step_name_rv_item, step.getId(), step.getShortDescription().replaceAll("\\.+$", "")));
+                    commonHolder.binding.tvStepName.setText(context.getString(R.string.step_name_rv_item, step.getId(), step.getShortDescription().replaceAll("\\.+$", "")));
                 }
-                commonHolder.ivPlayIcon.setVisibility(TextUtils.isEmpty(step.getVideoURL()) ? View.INVISIBLE : View.VISIBLE);
+                commonHolder.binding.ivPlayIcon.setVisibility(TextUtils.isEmpty(step.getVideoURL()) ? View.INVISIBLE : View.VISIBLE);
                 if (!TextUtils.isEmpty(step.getThumbnailURL())) {
                     Picasso.get().load(step.getThumbnailURL())
                             .noPlaceholder().error(R.drawable.ic_broken_image)
-                            .fit().centerInside().into(commonHolder.ivThumb);
+                            .fit().centerInside().into(commonHolder.binding.ivRecipeThumb);
                 } else if (position % 2 == 0) {
-                    commonHolder.ivThumb.setScaleX(-1);
+                    commonHolder.binding.ivRecipeThumb.setScaleX(-1);
                 }
         }
     }
@@ -130,18 +138,13 @@ public class RecipeDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     class RecipeDetailAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        final ImageView ivPlayIcon;
-        final TextView tvStepName;
-        final ImageView ivThumb;
+        private final RecipeDetailRvItemBinding binding;
 
-        RecipeDetailAdapterViewHolder(View itemView) {
-            super(itemView);
+        RecipeDetailAdapterViewHolder(RecipeDetailRvItemBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
 
-            ivPlayIcon = itemView.findViewById(R.id.iv_play_icon);
-            tvStepName = itemView.findViewById(R.id.tv_step_name);
-            ivThumb = itemView.findViewById(R.id.iv_recipe_thumb);
-
-            itemView.setOnClickListener(this);
+            this.binding.getRoot().setOnClickListener(this);
         }
 
         @Override
@@ -160,12 +163,11 @@ public class RecipeDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     class IngredientsViewHolder extends RecyclerView.ViewHolder {
-        final TextView tvIngredients;
+        private final RecipeIngredientsRvItemBinding binding;
 
-        IngredientsViewHolder(View itemView) {
-            super(itemView);
-
-            tvIngredients = itemView.findViewById(R.id.tv_ingredients);
+        IngredientsViewHolder(RecipeIngredientsRvItemBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 

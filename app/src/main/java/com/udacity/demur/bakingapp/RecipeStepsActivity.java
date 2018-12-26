@@ -11,6 +11,10 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.udacity.demur.bakingapp.model.Recipe;
 
+import static com.udacity.demur.bakingapp.service.Constant.EXTRA_JSON_RECIPE_KEY;
+import static com.udacity.demur.bakingapp.service.Constant.EXTRA_RECIPE_NAME_KEY;
+import static com.udacity.demur.bakingapp.service.Constant.EXTRA_STEP_NUMBER_KEY;
+
 public class RecipeStepsActivity extends AppCompatActivity implements
         RecipeStepsFragment.OnStepTabFragmentChangeListener {
 
@@ -20,15 +24,15 @@ public class RecipeStepsActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (null != getIntent().getExtras() && getIntent().hasExtra(RecipeListActivity.EXTRA_JSON_RECIPE_KEY)) {
+        if (null != getIntent().getExtras() && getIntent().hasExtra(EXTRA_JSON_RECIPE_KEY)) {
             setContentView(R.layout.activity_recipe_steps);
             if (null != getSupportActionBar()) {
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             }
 
-            jsonRecipe = getIntent().getStringExtra(RecipeListActivity.EXTRA_JSON_RECIPE_KEY);
-            if (getIntent().hasExtra(RecipeListActivity.EXTRA_RECIPE_NAME_KEY)) {
-                recipeName = getIntent().getStringExtra(RecipeListActivity.EXTRA_RECIPE_NAME_KEY);
+            jsonRecipe = getIntent().getStringExtra(EXTRA_JSON_RECIPE_KEY);
+            if (getIntent().hasExtra(EXTRA_RECIPE_NAME_KEY)) {
+                recipeName = getIntent().getStringExtra(EXTRA_RECIPE_NAME_KEY);
             }
             if (null == recipeName) {
                 recipeName = (new Gson().fromJson(jsonRecipe, Recipe.class)).getName();
@@ -39,9 +43,9 @@ public class RecipeStepsActivity extends AppCompatActivity implements
 
             if (null == fragmentManager.findFragmentById(R.id.recipe_steps_fragment_holder)) {
                 RecipeStepsFragment recipeStepsFragment;
-                if (getIntent().hasExtra(RecipeListActivity.EXTRA_STEP_NUMBER_KEY)) {
+                if (getIntent().hasExtra(EXTRA_STEP_NUMBER_KEY)) {
                     recipeStepsFragment = RecipeStepsFragment.newInstance(jsonRecipe,
-                            getIntent().getIntExtra(RecipeListActivity.EXTRA_STEP_NUMBER_KEY, 0));
+                            getIntent().getIntExtra(EXTRA_STEP_NUMBER_KEY, 0));
                 } else {
                     recipeStepsFragment = RecipeStepsFragment.newInstance(jsonRecipe);
                 }

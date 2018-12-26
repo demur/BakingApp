@@ -19,6 +19,7 @@ android {
     buildTypes.each {
         it.buildConfigField 'String', 'UNSPLASH_API_KEY', UnsplashApiKey
     }
+    dataBinding.enabled = true
 }
 
 dependencies {

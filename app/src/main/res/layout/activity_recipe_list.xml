@@ -1,30 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".RecipeListActivity">
+<layout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_recipe_list"
-        style="@style/RecyclerView" />
+    <data>
 
-    <ProgressBar
-        android:id="@+id/pb_loading_indicator"
-        style="@style/LoadingIndicator" />
+        <import type="android.view.View" />
 
-    <ImageView
-        android:id="@+id/iv_message_icon"
-        style="@style/MessageIcon" />
+        <variable
+            name="rvHelper"
+            type="com.udacity.demur.bakingapp.service.RecyclerViewStateHelper" />
+    </data>
 
-    <TextView
-        android:id="@+id/tv_message"
-        style="@style/ErrorMessage"
-        app:layout_constraintEnd_toEndOf="@id/iv_message_icon"
-        app:layout_constraintLeft_toLeftOf="@id/iv_message_icon"
-        app:layout_constraintRight_toRightOf="@id/iv_message_icon"
-        app:layout_constraintStart_toStartOf="@id/iv_message_icon"
-        app:layout_constraintTop_toBottomOf="@id/iv_message_icon" />
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".RecipeListActivity">
 
-</android.support.constraint.ConstraintLayout>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_recipe_list"
+            style="@style/RecyclerView"
+            android:visibility="@{rvHelper.loadingState||rvHelper.errorState ? View.INVISIBLE : View.VISIBLE}" />
+
+        <ProgressBar
+            android:id="@+id/pb_loading_indicator"
+            style="@style/LoadingIndicator"
+            android:visibility="@{rvHelper.loadingState ? View.VISIBLE : View.INVISIBLE}" />
+
+        <ImageView
+            android:id="@+id/iv_message_icon"
+            style="@style/MessageIcon"
+            android:visibility="@{rvHelper.errorState ? View.VISIBLE : View.INVISIBLE}" />
+
+        <TextView
+            android:id="@+id/tv_message"
+            style="@style/ErrorMessage"
+            android:visibility="@{rvHelper.errorState ? View.VISIBLE : View.INVISIBLE}"
+            app:layout_constraintEnd_toEndOf="@id/iv_message_icon"
+            app:layout_constraintStart_toStartOf="@id/iv_message_icon"
+            app:layout_constraintTop_toBottomOf="@id/iv_message_icon" />
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

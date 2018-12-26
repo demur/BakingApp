@@ -13,6 +13,8 @@ import com.udacity.demur.bakingapp.service.ListWidgetService;
 import static android.content.Context.MODE_PRIVATE;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
+import static com.udacity.demur.bakingapp.service.Constant.SHARED_PREFS_LAST_SEEN_RECIPE_KEY;
+import static com.udacity.demur.bakingapp.service.Constant.SHARED_PREFS_NAME;
 
 /**
  * Implementation of App Widget functionality.
@@ -45,8 +47,8 @@ public class RecipeIngredientsAppWidget extends AppWidgetProvider {
         Intent intent = new Intent(context, ListWidgetService.class);
         views.setRemoteAdapter(R.id.appwidget_list_view, intent);
         views.setEmptyView(R.id.appwidget_list_view, R.id.empty_list);
-        SharedPreferences sharedPrefs = context.getSharedPreferences(RecipeListActivity.SHARED_PREFS_NAME, MODE_PRIVATE);
-        String recipeName = sharedPrefs.getString(RecipeListActivity.SHARED_PREFS_LAST_SEEN_RECIPE_KEY, "");
+        SharedPreferences sharedPrefs = context.getSharedPreferences(SHARED_PREFS_NAME, MODE_PRIVATE);
+        String recipeName = sharedPrefs.getString(SHARED_PREFS_LAST_SEEN_RECIPE_KEY, "");
         if (!TextUtils.isEmpty(recipeName)) {
             views.setTextViewText(R.id.appwidget_title, context.getString(R.string.appwidget_title, recipeName));
             views.setViewVisibility(R.id.appwidget_title, VISIBLE);

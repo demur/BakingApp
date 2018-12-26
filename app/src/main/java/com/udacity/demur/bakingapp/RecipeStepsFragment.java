@@ -1,9 +1,9 @@
 package com.udacity.demur.bakingapp;
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -12,21 +12,23 @@ import android.view.ViewGroup;
 
 import com.google.gson.Gson;
 import com.udacity.demur.bakingapp.adapter.StepsPagerAdapter;
+import com.udacity.demur.bakingapp.databinding.FragmentRecipeStepsBinding;
 import com.udacity.demur.bakingapp.model.Recipe;
 import com.udacity.demur.bakingapp.model.RecipeStep;
 
-import static com.udacity.demur.bakingapp.RecipeListActivity.EXTRA_JSON_RECIPE_KEY;
-import static com.udacity.demur.bakingapp.RecipeListActivity.EXTRA_OPENED_TAB_KEY;
+import static com.udacity.demur.bakingapp.service.Constant.EXTRA_JSON_RECIPE_KEY;
+import static com.udacity.demur.bakingapp.service.Constant.EXTRA_OPENED_TAB_KEY;
 
 public class RecipeStepsFragment extends Fragment {
 
     private String jsonRecipe;
     private Recipe theRecipe;
     private int mOpenedTab;
-    private ViewPager mViewPager;
     private StepsPagerAdapter mStepsPagerAdapter;
 
     private OnStepTabFragmentChangeListener mListener;
+
+    private FragmentRecipeStepsBinding mBinding;
 
     public RecipeStepsFragment() {
         // Required empty public constructor
@@ -63,28 +65,24 @@ public class RecipeStepsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_recipe_steps, container, false);
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_steps, container, false);
 
-        if (null == mViewPager) {
-            mViewPager = view.findViewById(R.id.vp_container);
-            setupViewPager(mViewPager);
+        setupViewPager(mBinding.vpContainer);
 
-            TabLayout tabLayout = view.findViewById(R.id.tabs);
-            tabLayout.setupWithViewPager(mViewPager);
-            if (mOpenedTab >= 0 && mOpenedTab < tabLayout.getTabCount()) {
-                mViewPager.setCurrentItem(mOpenedTab);
-                if (null != mListener) {
-                    mListener.onStepTabFragmentChange(mOpenedTab);
-                }
+        mBinding.tabs.setupWithViewPager(mBinding.vpContainer);
+        if (mOpenedTab >= 0 && mOpenedTab < mBinding.tabs.getTabCount()) {
+            mBinding.vpContainer.setCurrentItem(mOpenedTab);
+            if (null != mListener) {
+                mListener.onStepTabFragmentChange(mOpenedTab);
             }
         }
-        return view;
+        return mBinding.getRoot();
     }
 
     public void setCurrentTab(int position) {
-        if (position != mOpenedTab && position >= 0 && position < mViewPager.getAdapter().getCount()) {
+        if (position != mOpenedTab && position >= 0 && position < mBinding.vpContainer.getAdapter().getCount()) {
             mOpenedTab = position;
-            mViewPager.setCurrentItem(position);
+            mBinding.vpContainer.setCurrentItem(position);
         }
     }
 

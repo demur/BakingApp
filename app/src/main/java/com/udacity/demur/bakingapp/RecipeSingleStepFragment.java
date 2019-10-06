@@ -2,13 +2,13 @@ package com.udacity.demur.bakingapp;
 
 import android.app.Dialog;
 import android.content.res.Configuration;
-import android.databinding.DataBindingUtil;
+import androidx.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintSet;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.fragment.app.Fragment;
+import androidx.core.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,10 +33,10 @@ import com.google.gson.Gson;
 import com.udacity.demur.bakingapp.databinding.FragmentRecipeSingleStepBinding;
 import com.udacity.demur.bakingapp.model.RecipeStep;
 
-import static android.support.constraint.ConstraintSet.END;
-import static android.support.constraint.ConstraintSet.MATCH_CONSTRAINT;
-import static android.support.constraint.ConstraintSet.START;
-import static android.support.constraint.ConstraintSet.TOP;
+import static androidx.constraintlayout.widget.ConstraintSet.END;
+import static androidx.constraintlayout.widget.ConstraintSet.MATCH_CONSTRAINT;
+import static androidx.constraintlayout.widget.ConstraintSet.START;
+import static androidx.constraintlayout.widget.ConstraintSet.TOP;
 import static com.udacity.demur.bakingapp.service.Constant.EXTRA_JSON_STEP_KEY;
 
 /*

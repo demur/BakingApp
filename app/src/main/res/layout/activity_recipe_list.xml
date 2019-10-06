@@ -10,14 +10,14 @@
             type="com.udacity.demur.bakingapp.service.RecyclerViewStateHelper" />
     </data>
 
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".RecipeListActivity">
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_recipe_list"
             style="@style/RecyclerView"
             android:visibility="@{rvHelper.loadingState||rvHelper.errorState ? View.INVISIBLE : View.VISIBLE}" />
@@ -40,5 +40,5 @@
             app:layout_constraintStart_toStartOf="@id/iv_message_icon"
             app:layout_constraintTop_toBottomOf="@id/iv_message_icon" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

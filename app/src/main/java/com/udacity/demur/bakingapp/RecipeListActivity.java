@@ -4,11 +4,12 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import androidx.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,6 +28,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
 
 import static com.udacity.demur.bakingapp.service.Constant.EXTRA_JSON_RECIPE_KEY;
 import static com.udacity.demur.bakingapp.service.Constant.EXTRA_RECIPE_NAME_KEY;
@@ -88,7 +90,7 @@ public class RecipeListActivity extends AppCompatActivity implements
         rvHelper.setErrorState(false);
         call.enqueue(new Callback<List<Recipe>>() {
             @Override
-            public void onResponse(@NonNull Call<List<Recipe>> call, @NonNull retrofit2.Response<List<Recipe>> response) {
+            public void onResponse(@NonNull Call<List<Recipe>> call, @NonNull Response<List<Recipe>> response) {
                 rvHelper.setLoadingState(false);
                 if (response.code() == 200) {
                     mRecipeList = response.body();
